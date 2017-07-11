@@ -43,14 +43,17 @@ export default class App extends Component {
     const contactsFull = await Expo.Contacts.getContactsAsync({
       fields: [ Expo.Contacts.PHONE_NUMBERS ]
     });
-    contacts = contactsFull.data.filter(function(contact){
+    const contacts = contactsFull.data.filter((contact) => {
       return contact.phoneNumbers.length > 0;
-    }).map(function(contact){
+    }).map((contact) => {
       return {
-        first: contact.firstName.toLowerCase().charAt(0).toUpperCase(),
-        last: contacts.lastName.toLowerCase().charAt(0).toUpperCase(), 
+        first: contact.firstName.charAt(0).toUpperCase() + contact.firstName.toLowerCase().slice(1),
+        last: contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1),
       }
     })
+
+    console.log(contacts)
+
     this.setState({ contactData: this.state.ds.cloneWithRows(contacts) })
   }
 
