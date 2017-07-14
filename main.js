@@ -8,15 +8,20 @@ export default class App extends Component {
   constructor(props){
     super(props)
     this.handlePress = this.handlePress.bind(this)
+    this.handleSearch = this.handleSearch.bind(this)
+    this.handleClose = this.handleClose.bind(this)
     this.getContacts = this.getContacts.bind(this)
     this.requestContactPerm = this.requestContactPerm.bind(this)
+    this.formatContacts = this.formatContacts.bind(this)
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      contactVis: false,
+      contactsVis: false,
       contactPerm : null,
-      contactData: null,
+      contactsFull: null,
+      contactsData: null,
+      searchitem: null,
       ds: ds,
     }
   }
@@ -27,43 +32,77 @@ export default class App extends Component {
     this.getContacts()
   }
 
-  async handlePress(){
-    if (this.state.contactPerm !== 'granted') {
-      alert("We're not the NSA! We need permission to access your contacts. Namaste!")
-      this.requestContactPerm()
-    } else {
-      this.setState({contactVis: true})
-    }
-  }
-
   async getContacts(){
     const contactsFull = await Expo.Contacts.getContactsAsync({
       fields: [ Expo.Contacts.PHONE_NUMBERS ]
     });
     const contacts = contactsFull.data.filter((contact) => {
       return contact.phoneNumbers.length > 0;
-    }).map((contact) => {
+    })
+
+    const formattedContacts = this.formatContacts(contacts)
+
+    this.setState({
+      contactsFull: contactsFull.data,
+      contactsData: this.state.ds.cloneWithRows(formattedContacts)
+    })
+  }
+
+  formatContacts(contacts){
+    return contacts.map((contact) => {
       return {
         first: contact.firstName.charAt(0).toUpperCase() + contact.firstName.toLowerCase().slice(1),
         last: contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1),
       }
     })
-    this.setState({ contactData: this.state.ds.cloneWithRows(contacts) })
+  }
+
+  handlePress(){
+    if (this.state.contactPerm !== 'granted') {
+      alert("We're not the NSA! We need permission to access your contacts. Namaste!")
+      this.requestContactPerm()
+    } else {
+      this.setState({contactsVis: true})
+    }
+  }
+
+  handleSearch(name){
+    const contacts = this.state.contactsFull.filter((contact) => {
+      return (contact.name.indexOf(name) != -1)
+    })
+    const formattedContacts = this.formatContacts(contacts)
+    this.setState({
+      searchitem: name,
+      contactsData: this.state.ds.cloneWithRows(formattedContacts)
+    })
+  }
+
+  handleClose(){
+    this.setState({
+      contactsVis: false,
+      searchitem: null,
+    })
   }
 
   componentWillMount(){
     if (this.state.contactPerm !== 'granted') this.requestContactPerm()
-    else if (this.state.contactData === null) this.getContacts()
+    else if (this.state.contactsData === null) this.getContacts()
   }
 
   render(){
     return (
       <View style={styles.container}>
 
-        { this.state.contactVis
-          ? <ContactList isVisable={this.state.contactVis} contacts={this.state.contactData} />
-          : null
-        }
+        { this.state.contactsVis
+          ? <Modal animationType={"slide"} transparent={false} visible={this.state.isVisable} >
+                 <ContactList isVisable={this.state.contactsVis}
+                              contacts={this.state.contactsData}
+                              searchitem={this.state.searchitem}
+                              handleSearch={this.handleSearch}
+                              handleClose={this.handleClose}
+                              />
+            </Modal>
+          : null }
 
         <TouchableOpacity onPress={this.handlePress}>
           <Text style={styles.icon}>🙏</Text>

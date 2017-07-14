@@ -7,33 +7,20 @@ class ContactList extends Component {
   constructor(props){
     super(props)
 
-    this.renderModalBody = this.renderModalBody.bind(this)
-    this.handlePress = this.handlePress.bind(this)
-    this.handleSearch = this.handleSearch.bind(this)
-
     this.state = {
       searchitem: null,
-      isVisable: props.isVisable,
       contacts: props.contacts,
     }
   }
 
-  componentWillReceiveProps(vis, contacts){
+  componentWillReceiveProps(props){
     this.setState({
-      isVisable: vis,
-      contacts: contacts
+      isVisable: props.isVisable,
+      contacts: props.contacts
     })
   }
 
-  handlePress(){
-    this.setState({ isVisable: false })
-  }
-
-  handleSearch(name){
-    this.setState({ searchitem: name })
-  }
-
-  renderModalBody(){
+  render() {
     if (this.state.contacts === null) {
       return (
         <View style={styles.modalError}>
@@ -46,28 +33,21 @@ class ContactList extends Component {
       )
     } else return (
       <View style={styles.modalSuccess}>
-        <TextInput onChangeText={this.handleSearch}
+        <TextInput onChangeText={this.props.handleSearch}
                    value={this.state.searchitem}
+                   placeholder="Search"
+                   selectTextOnFocus={true}
                    style={styles.searchBar}
                    />
         <ListView dataSource={this.state.contacts}
                   renderRow={(data) => <ContactRow {...data} />}
                   renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+                  enableEmptySections={true}
                   />
-        <TouchableHighlight onPress={this.handlePress} >
+        <TouchableHighlight onPress={this.props.handleClose} >
           <Text>Close</Text>
         </TouchableHighlight>
       </View>
-    )
-  }
-
-  render() {
-    return (
-      <Modal animationType={"slide"}
-             transparent={false}
-             visible={this.state.isVisable} >
-        { this.renderModalBody() }
-      </Modal>
     )
   }
 }

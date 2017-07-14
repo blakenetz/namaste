@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 
 const ContactRow = (contact) => (
   <View>
+    {console.log(contact)}
     <Text style={styles.name}>{contact.first} {contact.last}</Text>
   </View>
 )
