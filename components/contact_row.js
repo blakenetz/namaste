@@ -1,17 +1,38 @@
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React , { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import { CheckBox, ListItem } from 'react-native-elements';
 
-const ContactRow = (contact) => (
-  <View>
-    {console.log(contact)}
-    <Text style={styles.name}>{contact.first} {contact.last}</Text>
-  </View>
-)
+class ContactRow extends Component {
+  constructor(props){
+    super(props)
+    this.handlePress = this.handlePress.bind(this)
+    this.state = { checked: null }
+  }
+
+  handlePress(){
+    this.setState({ checked: !this.state.checked })
+  }
+
+  render(){
+    return (
+      <ListItem title={this.props.first + " " + this.props.last}
+                data-number={this.props.phone}
+                subtitle={this.props.subtitle}
+                hideChevron={true}
+                leftIcon={ <CheckBox containerStyle={styles.checkbox}
+                                     onPress={this.handlePress}
+                                     checked={this.state.checked}
+                                     /> }
+                />
+    );
+  }
+}
 
 const styles = StyleSheet.create({
-  name: {
-    fontSize: 25,
-    padding: 10,
+  checkbox: {
+    backgroundColor: "#FFF",
+    borderWidth: 0,
+    padding: 1,
   }
 })
 

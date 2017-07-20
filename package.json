@@ -1,13 +1,22 @@
 {
   "name": "namaste",
-  "version": "0.0.0",
-  "description": "Hello Expo!",
-  "author": null,
-  "private": true,
+  "version": "0.1.0",
+  "description": "Namaste bitches",
+  "author": "Blake Netzeband",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blakeface/namaste/issues"
+  },
+  "homepage": "https://github.com/blakeface/namaste#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blakeface/namaste.git"
+  },
   "main": "main.js",
   "dependencies": {
     "expo": "17.0.0",
     "react": "16.0.0-alpha.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz",
+    "react-native-elements": "^0.15.0"
   }
 }

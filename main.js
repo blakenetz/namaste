@@ -34,7 +34,8 @@ export default class App extends Component {
 
   async getContacts(){
     const contactsFull = await Expo.Contacts.getContactsAsync({
-      fields: [ Expo.Contacts.PHONE_NUMBERS ]
+      fields: [ Expo.Contacts.PHONE_NUMBERS ],
+      pageSize: 10000,
     });
     const contacts = contactsFull.data.filter((contact) => {
       return contact.phoneNumbers.length > 0;
@@ -50,9 +51,16 @@ export default class App extends Component {
 
   formatContacts(contacts){
     return contacts.map((contact) => {
-      return {
-        first: contact.firstName.charAt(0).toUpperCase() + contact.firstName.toLowerCase().slice(1),
-        last: contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1),
+      const firstName = contact.firstName.charAt(0).toUpperCase() + contact.firstName.toLowerCase().slice(1)
+      const lastName = contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1)
+      for (var i = 0; i < contact.phoneNumbers.length; i++) {
+        const label = contact.phoneNumbers[i].label ? contact.phoneNumbers[i].label : 'mobile';
+        return {
+          first: firstName,
+          last: lastName,
+          subtitle: label,
+          phone: contact.phoneNumbers[i].number
+        }
       }
     })
   }

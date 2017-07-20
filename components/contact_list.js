@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Modal, View, Text, TouchableHighlight, TextInput, ListView } from 'react-native';
+import { StyleSheet, Modal, View, Text, TouchableHighlight, ListView } from 'react-native';
+import { List, SearchBar } from 'react-native-elements';
 
 import ContactRow from './contact_row';
 
 class ContactList extends Component {
   constructor(props){
     super(props)
-
     this.state = {
       searchitem: null,
       contacts: props.contacts,
@@ -33,17 +33,16 @@ class ContactList extends Component {
       )
     } else return (
       <View style={styles.modalSuccess}>
-        <TextInput onChangeText={this.props.handleSearch}
-                   value={this.state.searchitem}
-                   placeholder="Search"
-                   selectTextOnFocus={true}
-                   style={styles.searchBar}
-                   />
-        <ListView dataSource={this.state.contacts}
-                  renderRow={(data) => <ContactRow {...data} />}
-                  renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-                  enableEmptySections={true}
-                  />
+        <SearchBar onChangeText={this.props.handleSearch} placeholder="Search" />
+
+        <List>
+          <ListView dataSource={this.state.contacts}
+                    renderRow={(data) => <ContactRow {...data} />}
+                    renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+                    enableEmptySections={true}
+                    />
+        </List>
+
         <TouchableHighlight onPress={this.props.handleClose} >
           <Text>Close</Text>
         </TouchableHighlight>
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
   modalSuccess: {
     flex: 1,
     justifyContent: 'center',
-    marginTop: 22,
+    marginTop: 59,
     height: '90%',
   },
   searchBar: {
