@@ -1,6 +1,7 @@
-import Expo from 'expo';
+import Expo, { Font } from 'expo';
 import React, { Component } from 'react';
-import { StyleSheet, Text, TextInput, View, ListView, TouchableOpacity, TouchableHighlight, Modal } from 'react-native';
+import { StyleSheet, Text, View, ListView, TouchableOpacity, Modal, Image } from 'react-native';
+import { Button } from 'react-native-elements';
 
 import ContactList from './components/contact_list';
 
@@ -17,6 +18,7 @@ export default class App extends Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
+      fontLoaded: false,
       contactsVis: false,
       contactPerm : null,
       contactsFull: null,
@@ -97,9 +99,16 @@ export default class App extends Component {
     else if (this.state.contactsData === null) this.getContacts()
   }
 
+  async componentDidMount(){
+    await Font.loadAsync({
+      'Prisma': require('./assets/fonts/Prisma.ttf'),
+    });
+    this.setState({ fontLoaded: true });
+  }
+
   render(){
     return (
-      <View style={styles.container}>
+      <Image source={require('./assets/images/budda.png')} style={styles.bgImage} >
 
         { this.state.contactsVis
           ? <Modal animationType={"slide"} transparent={false} visible={this.state.isVisable} >
@@ -110,31 +119,40 @@ export default class App extends Component {
                               handleClose={this.handleClose}
                               />
             </Modal>
-          : null }
-
-        <TouchableOpacity onPress={this.handlePress}>
-          <Text style={styles.icon}>🙏</Text>
-          <Text style={styles.title}>Send a Namaste</Text>
-        </TouchableOpacity>
-
-      </View>
+          : null
+        }
+        { this.state.fontLoaded ?
+          <Button raised
+                  title="Send a Namaste"
+                  onPress={this.handlePress}
+                  fontSize={30}
+                  fontFamily="Prisma"
+                  backgroundColor="rgba(255, 255, 255, 0.8)"
+                  color="#000"
+                  containerViewStyle={styles.button}
+                  />
+          : null
+        }
+      </Image>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  bgImage: {
     flex: 1,
-    backgroundColor: '#fff',
+    width: null,
+    height: null,
+    backgroundColor: '#FFF8C6',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  icon: {
-    fontSize: 100,
-  },
-  title: {
-    fontSize: 27,
-  },
+  button: {
+    bottom: 75,
+    borderColor: '#000',
+    borderWidth: 5,
+    borderRadius: 2,
+  }
 });
 
 Expo.registerRootComponent(App);
