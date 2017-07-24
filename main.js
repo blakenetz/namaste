@@ -57,11 +57,12 @@ export default class App extends Component {
       const lastName = contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1)
       for (var i = 0; i < contact.phoneNumbers.length; i++) {
         const label = contact.phoneNumbers[i].label ? contact.phoneNumbers[i].label : 'mobile';
+        const number = contact.phoneNumbers[i].number.replace(/[^0-9]*/g, '');
         return {
           first: firstName,
           last: lastName,
           subtitle: label,
-          phone: contact.phoneNumbers[i].number
+          phone: number
         }
       }
     })
