@@ -8,4 +8,4 @@ Warm those hands up and dish out some Namastes
 
 ### ⌨️ install / run
 * npm install
-* launch with expo (currently no npm start script)
+* npm start OR launch with expo

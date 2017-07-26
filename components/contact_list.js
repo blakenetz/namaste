@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Modal, View, Text, ListView, Dimensions } from 'react-native';
+import { StyleSheet, Modal, View, Text, ListView } from 'react-native';
 import { List, SearchBar, Button } from 'react-native-elements';
 import Communications, { text } from 'react-native-communications';
 
@@ -10,10 +10,10 @@ class ContactList extends Component {
     super(props)
     this.handleSend = this.handleSend.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
+    this.renderRow = this.renderRow.bind(this)
     this.state = {
-      searchitem: null,
       contacts: props.contacts,
-      selectedContacts: [],
+      selectedContacts: []
     }
   }
 
@@ -21,21 +21,28 @@ class ContactList extends Component {
     console.log('handleSend')
   }
 
-  handleSelect(e){
-    console.log('handleSelect')
-    console.log(e)
-    this.setState((prevState, props) => {
-
-    })
+  handleSelect(e, num){
+    const selectedContacts = this.state.selectedContacts
+    const i = selectedContacts.indexOf(num)
+    if (i === -1) selectedContacts.push(num)
+    else selectedContacts.splice(i, 1)
+    this.setState({ selectedContacts: selectedContacts })
+    this.props.handleUpdate()
   }
 
   componentWillReceiveProps(props){
-    this.setState({
-      isVisable: props.isVisable,
-      contacts: props.contacts,
-    })
+    this.setState({ contacts: props.contacts })
   }
 
+  renderRow(data, sID, rID){
+    console.log(sID)
+    return (
+      <ContactRow contactData={data}
+                  handleSelect={this.handleSelect}
+                  checkedItem={this.state.selectedContacts}
+                  row={rID}/>
+    )
+  }
   render() {
     if (this.state.contacts === null) {
       return (
@@ -53,8 +60,7 @@ class ContactList extends Component {
 
         <List>
           <ListView dataSource={this.state.contacts}
-                    renderRow={(data) => <ContactRow contactData={data}
-                                                      handleSelect={this.handleSelect} /> }
+                    renderRow={this.renderRow}
                     renderSeparator={(rowId) => <View key={rowId} style={styles.separator} />}
                     enableEmptySections={true}
                     />
@@ -84,7 +90,6 @@ class ContactList extends Component {
   }
 }
 
-const ScreenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   modalError: {
     flex: 1,

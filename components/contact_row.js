@@ -5,22 +5,31 @@ import { CheckBox, ListItem } from 'react-native-elements';
 class ContactRow extends Component {
   constructor(props){
     super(props)
-    this.handleSelect = this.handleSelect.bind(this)
-    this.state = { checked: null }
+    this.state = {
+      checked: props.checkedItem.indexOf(props.contactData.phone) === -1 ? false : true
+    }
   }
 
-  handleSelect(){
-    this.setState({ checked: !this.state.checked })
+  componentWillReceiveProps(props){
+    console.log('componentWillReceiveProps')
+    this.setState({
+      checked: props.checkedItem.indexOf(props.contactData.phone) === -1 ? false : true
+    })
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('shouldComponentUpdate')
+    console.log(nextProps, nextState);
   }
 
   render(){
     return (
       <ListItem title={this.props.contactData.first + " " + this.props.contactData.last}
-                data-number={this.props.contactData.phone}
                 subtitle={this.props.contactData.subtitle}
                 hideChevron={true}
-                onPress={this.props.handleSelect}
-                leftIcon={ <CheckBox containerStyle={styles.checkbox} checked={this.state.checked} /> }
+                onPress={(e) => {this.props.handleSelect(e, this.props.contactData.phone)}}
+                row={this.props.key}
+                leftIcon={<CheckBox containerStyle={styles.checkbox} checked={this.state.checked} />}
                 />
     );
   }

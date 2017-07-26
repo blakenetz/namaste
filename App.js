@@ -1,4 +1,4 @@
-import Expo, { Font } from 'expo';
+import Expo, { Font, Contacts, Permissions } from 'expo';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ListView, TouchableOpacity, Modal, Image } from 'react-native';
 import { Button } from 'react-native-elements';
@@ -14,6 +14,7 @@ export default class App extends Component {
     this.getContacts = this.getContacts.bind(this)
     this.requestContactPerm = this.requestContactPerm.bind(this)
     this.formatContacts = this.formatContacts.bind(this)
+    this.handleUpdate = this.handleUpdate.bind(this)
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -29,22 +30,20 @@ export default class App extends Component {
   }
 
   async requestContactPerm(){
-    const permission = await Expo.Permissions.askAsync(Expo.Permissions.CONTACTS);
+    const permission = await Permissions.askAsync(Permissions.CONTACTS);
     this.setState({contactPerm: permission.status})
     this.getContacts()
   }
 
   async getContacts(){
-    const contactsFull = await Expo.Contacts.getContactsAsync({
-      fields: [ Expo.Contacts.PHONE_NUMBERS ],
+    const contactsFull = await Contacts.getContactsAsync({
+      fields: [ Contacts.PHONE_NUMBERS ],
       pageSize: 10000,
     });
     const contacts = contactsFull.data.filter((contact) => {
       return contact.phoneNumbers.length > 0;
     })
-
     const formattedContacts = this.formatContacts(contacts)
-
     this.setState({
       contactsFull: contactsFull.data,
       contactsData: this.state.ds.cloneWithRows(formattedContacts)
@@ -95,6 +94,10 @@ export default class App extends Component {
     })
   }
 
+  handleUpdate(){
+    this.state.ds.cloneWithRows(this.state.contactsData);
+  }
+
   componentWillMount(){
     if (this.state.contactPerm !== 'granted') this.requestContactPerm()
     else if (this.state.contactsData === null) this.getContacts()
@@ -107,21 +110,21 @@ export default class App extends Component {
     this.setState({ fontLoaded: true });
   }
 
+  componentWillReceiveProps(props){
+    console.log(props)
+  }
+
   render(){
     return (
       <Image source={require('./assets/images/budda.png')} style={styles.bgImage} >
+        <Modal animationType={"slide"} transparent={false} visible={this.state.contactsVis} >
+          <ContactList contacts={this.state.contactsData}
+                        handleSearch={this.handleSearch}
+                        handleClose={this.handleClose}
+                        handleUpdate={this.handleUpdate}
+                        />
+        </Modal>
 
-        { this.state.contactsVis
-          ? <Modal animationType={"slide"} transparent={false} visible={this.state.isVisable} >
-                 <ContactList isVisable={this.state.contactsVis}
-                              contacts={this.state.contactsData}
-                              searchitem={this.state.searchitem}
-                              handleSearch={this.handleSearch}
-                              handleClose={this.handleClose}
-                              />
-            </Modal>
-          : null
-        }
         { this.state.fontLoaded ?
           <Button raised
                   title="Send a Namaste"
