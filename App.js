@@ -14,7 +14,6 @@ export default class App extends Component {
     this.getContacts = this.getContacts.bind(this)
     this.requestContactPerm = this.requestContactPerm.bind(this)
     this.formatContacts = this.formatContacts.bind(this)
-    this.handleUpdate = this.handleUpdate.bind(this)
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -61,7 +60,7 @@ export default class App extends Component {
           first: firstName,
           last: lastName,
           subtitle: label,
-          phone: number
+          phone: number,
         }
       }
     })
@@ -94,10 +93,6 @@ export default class App extends Component {
     })
   }
 
-  handleUpdate(){
-    this.state.ds.cloneWithRows(this.state.contactsData);
-  }
-
   componentWillMount(){
     if (this.state.contactPerm !== 'granted') this.requestContactPerm()
     else if (this.state.contactsData === null) this.getContacts()
@@ -110,10 +105,6 @@ export default class App extends Component {
     this.setState({ fontLoaded: true });
   }
 
-  componentWillReceiveProps(props){
-    console.log(props)
-  }
-
   render(){
     return (
       <Image source={require('./assets/images/budda.png')} style={styles.bgImage} >
@@ -121,7 +112,6 @@ export default class App extends Component {
           <ContactList contacts={this.state.contactsData}
                         handleSearch={this.handleSearch}
                         handleClose={this.handleClose}
-                        handleUpdate={this.handleUpdate}
                         />
         </Modal>
 

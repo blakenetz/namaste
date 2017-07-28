@@ -27,7 +27,6 @@ class ContactList extends Component {
     if (i === -1) selectedContacts.push(num)
     else selectedContacts.splice(i, 1)
     this.setState({ selectedContacts: selectedContacts })
-    this.props.handleUpdate()
   }
 
   componentWillReceiveProps(props){
@@ -35,7 +34,6 @@ class ContactList extends Component {
   }
 
   renderRow(data, sID, rID){
-    console.log(sID)
     return (
       <ContactRow contactData={data}
                   handleSelect={this.handleSelect}
