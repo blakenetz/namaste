@@ -44,21 +44,18 @@ export default class App extends Component {
     })
     const formattedContacts = this.formatContacts(contacts)
     this.setState({
-      contactsFull: contactsFull.data,
+      contactsFull: formattedContacts,
       contactsData: this.state.ds.cloneWithRows(formattedContacts)
     })
   }
 
   formatContacts(contacts){
     return contacts.map((contact) => {
-      const firstName = contact.firstName.charAt(0).toUpperCase() + contact.firstName.toLowerCase().slice(1)
-      const lastName = contact.lastName.charAt(0).toUpperCase() + contact.lastName.toLowerCase().slice(1)
       for (var i = 0; i < contact.phoneNumbers.length; i++) {
         const label = contact.phoneNumbers[i].label ? contact.phoneNumbers[i].label : 'mobile';
-        const number = contact.phoneNumbers[i].number.replace(/[^0-9]*/g, '');
+        const number = contact.phoneNumbers[i].number.replace(/[^0-9]*/g, '').toString();
         return {
-          first: firstName,
-          last: lastName,
+          name: contact.firstName.toLowerCase() + ' ' + contact.lastName.toLowerCase(),
           subtitle: label,
           phone: number,
         }
@@ -77,12 +74,11 @@ export default class App extends Component {
 
   handleSearch(name){
     const contacts = this.state.contactsFull.filter((contact) => {
-      return (contact.name.indexOf(name) != -1)
+      return (contact.name.indexOf(name.toLowerCase()) !== -1)
     })
-    const formattedContacts = this.formatContacts(contacts)
     this.setState({
       searchitem: name,
-      contactsData: this.state.ds.cloneWithRows(formattedContacts)
+      contactsData: this.state.ds.cloneWithRows(contacts)
     })
   }
 

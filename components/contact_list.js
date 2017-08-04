@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Modal, View, Text, ListView } from 'react-native';
-import { List, SearchBar, Button } from 'react-native-elements';
+import { List, SearchBar, Icon, Button } from 'react-native-elements';
 import Communications, { text } from 'react-native-communications';
 
 import ContactRow from './contact_row';
@@ -18,7 +18,7 @@ class ContactList extends Component {
   }
 
   handleSend(){
-    console.log('handleSend')
+    text(this.state.selectedContacts.pop(), 'namaste 🙏')
   }
 
   handleSelect(e, num){
@@ -27,6 +27,10 @@ class ContactList extends Component {
     if (i === -1) selectedContacts.push(num)
     else selectedContacts.splice(i, 1)
     this.setState({ selectedContacts: selectedContacts })
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    return true;
   }
 
   componentWillReceiveProps(props){
@@ -56,7 +60,7 @@ class ContactList extends Component {
       <View style={styles.modalSuccess}>
         <SearchBar onChangeText={this.props.handleSearch} placeholder="Search" />
 
-        <List>
+        <List style={styles.list}>
           <ListView dataSource={this.state.contacts}
                     renderRow={this.renderRow}
                     renderSeparator={(rowId) => <View key={rowId} style={styles.separator} />}
@@ -64,15 +68,12 @@ class ContactList extends Component {
                     />
         </List>
         <View style={styles.buttonContainer}>
-          <Button raised
-                  title="Cancel"
-                  onPress={this.props.handleClose}
-                  fontSize={30}
-                  fontFamily="Prisma"
-                  backgroundColor="#303337"
-                  color="#86939e"
-                  containerViewStyle={styles.button}
-                  />
+          <Icon name="chevron-circle-left"
+                type="font-awesome"
+                onPress={this.props.handleClose}
+                color="#86939e"
+                iconStyle={styles.icon}
+                />
           <Button raised
                   title="Send"
                   onPress={this.handleSend}
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 30,
+    height: 100
   },
   modalSuccess: {
     flex: 2,
@@ -101,10 +103,10 @@ const styles = StyleSheet.create({
     top: 100,
     bottom: 0,
   },
+  list: {
+    height: '100%',
+  },
   searchBar: {
-    borderColor: 'black',
-    borderStyle: 'solid',
-    borderWidth: 1,
     width: '100%',
     height: 30,
   },
@@ -113,14 +115,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#8E8E8E',
   },
   buttonContainer: {
-    bottom: 150,
+    bottom: 155,
+    height: 70,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems: 'center',
     backgroundColor: '#43484d',
   },
   button: {
-    margin: 8
+    margin: 8,
+    width: 200,
+  },
+  icon: {
+    margin: 0,
   }
+
 })
 
 export default ContactList;

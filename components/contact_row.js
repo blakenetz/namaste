@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { CheckBox, ListItem } from 'react-native-elements';
 
 class ContactRow extends Component {
@@ -11,6 +11,11 @@ class ContactRow extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    return nextProps.checkedItem.indexOf(nextState) == -1
+  }
+
+
   handleCheck(){
     this.setState({
       checked: !this.state.checked
@@ -18,8 +23,11 @@ class ContactRow extends Component {
   }
 
   render(){
+    const name = this.props.contactData.name.split(' ').map(function(el){
+      return el.charAt(0).toUpperCase() + el.toLowerCase().slice(1)
+    })
     return (
-      <ListItem title={this.props.contactData.first + " " + this.props.contactData.last}
+      <ListItem title={name.join(' ')}
                 subtitle={this.props.contactData.subtitle}
                 hideChevron={true}
                 onPress={(e) => {
